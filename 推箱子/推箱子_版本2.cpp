@@ -52,7 +52,7 @@ enum advance{//方向
 	Right //右
 };
 
-struct _POS man;//人物坐标
+struct _POS man = {0, 0};//人物坐标
 
 int age = Floor; //标记  
 int step = 0;
@@ -70,6 +70,9 @@ int map[MAP_HEIGHT][MAP_WIDTH] = {
 		{0, 1, 0, 2, 0, 1, 1, 1, 1, 0, 4, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 
+//创建新地图
+int create_map[MAP_HEIGHT][MAP_WIDTH] = {0};
+
 /*********************************************************************
 *目的:   在指定位置打印指定图片
 *输入:   保存坐标的结构体的地址, 图片
@@ -80,7 +83,7 @@ void image(struct _POS *pos, enum daoju_num num) {
 	putimage(MAP_PY_WIDTH + pos->x * DAOJU_SIZE, MAP_PY_HEIGHT + pos->y * DAOJU_SIZE, &daoju[num]);
 }
 
-
+//步数
 void step_num(int *p) {
 	char str[10];
 	sprintf(str, "步数: %d", *p);
@@ -187,13 +190,13 @@ bool end_scene(IMAGE *img) {
 	return true;
 }
 
-int main(void) {
-
-	IMAGE img;
+/*******************************
+*加载游戏资源
+*输入:    img用来保存游戏背景图片
+*返回值:  无
+********************************/
+void loadres(IMAGE& img) {
 	char daoju_name[ALL][DAOJU_NAME_LEN];								      //保存游戏资源的文件名
-	
-	initgraph(WINDOW_WIDTH, WINDOW_HEIGHT);
-
 	loadimage(&img, _T("blackground.bmp"), WINDOW_WIDTH, WINDOW_HEIGHT, true);//加载背景资源
 	putimage(0, 0, &img);													  //显示背景
 
@@ -201,24 +204,18 @@ int main(void) {
 		sprintf(daoju_name[i], "daoju%d.bmp", i);
 		loadimage(&daoju[i], _T(daoju_name[i]), DAOJU_SIZE, DAOJU_SIZE, true);
 	}
-	
-	for(int i=0, num=0; i<MAP_HEIGHT; i++) {										  //显示游戏场景
-		for(int j=0; j<MAP_WIDTH; j++) {
-			if(map[i][j] == Man) {
-				man.x = j;
-				man.y = i;
-			}
-			
-			putimage(MAP_PY_WIDTH +j*DAOJU_SIZE, MAP_PY_HEIGHT+i*DAOJU_SIZE, &daoju[map[i][j]]);
-		}
-	}
-	
-	bool quit = false;
-	while(!quit) {
+}
+
+/***********************************
+*游戏控制键:
+*输入:    img游戏结束背景
+*返回值:  无
+************************************/
+void input() {
+	while(true) {
 		step_num(&step);
 		if(_kbhit()) {	       //是否按键
 			char ch = _getch();//按下的键盘字符
-			end_scene(&img);
 			if(ch == KBHIT_UP) {         //上
 				move(Up);
 			}else if(ch == KBHIT_DOWN) { //下
@@ -228,11 +225,132 @@ int main(void) {
 			}else if(ch == KBHIT_RIGHT) {//右
 				move(Right);
 			}else if(ch == KBHIT_QUIT) { //退出
-				quit = true;
+				break;
 			}
-			quit = end_scene(&img);
 		}
 		Sleep(100);
+	}
+}
+
+//显示游戏场景
+void dispiayScene(IMAGE& img) {
+	cleardevice();
+	putimage(0, 0, &img);
+	for(int i=0; i<MAP_HEIGHT; i++) {										  //显示游戏场景
+		for(int j=0; j<MAP_WIDTH; j++) {
+			if(map[i][j] == Man) {//人物的位置
+				man.x = j;  
+				man.y = i;
+			}
+			
+			putimage(MAP_PY_WIDTH +j*DAOJU_SIZE, MAP_PY_HEIGHT+i*DAOJU_SIZE, &daoju[map[i][j]]);
+		}
+	}
+	input();//游戏控制键
+}
+
+
+
+//创建地图
+void createMap(IMAGE& img) {
+	cleardevice();
+	putimage(0, 0, &img);
+	for(int i=0; i<MAP_HEIGHT; i++) {										  //显示游戏场景
+		for(int j=0; j<MAP_WIDTH; j++) {
+			putimage(MAP_PY_WIDTH +j*DAOJU_SIZE, MAP_PY_HEIGHT+i*DAOJU_SIZE, &daoju[create_map[i][j]]);
+		}
+	}
+	putimage(MAP_PY_WIDTH +man.x*DAOJU_SIZE, MAP_PY_HEIGHT+man.y*DAOJU_SIZE, &daoju[Man]);
+	while(true) {
+		if(_kbhit()) {	       //是否按键
+			switch(_getch()) {//按下的键盘字符
+			case KBHIT_UP:          //上
+				if (man.y > 0) {
+					putimage(MAP_PY_WIDTH +man.x*DAOJU_SIZE, MAP_PY_HEIGHT+man.y*DAOJU_SIZE, &daoju[create_map[man.y][man.x]]);
+					man.y--;
+					putimage(MAP_PY_WIDTH +man.x*DAOJU_SIZE, MAP_PY_HEIGHT+man.y*DAOJU_SIZE, &daoju[Man]);
+				}
+				break;
+			case KBHIT_DOWN:  //下
+				if (man.y < MAP_HEIGHT-1) {
+					putimage(MAP_PY_WIDTH +man.x*DAOJU_SIZE, MAP_PY_HEIGHT+man.y*DAOJU_SIZE, &daoju[create_map[man.y][man.x]]);
+					man.y++;
+					putimage(MAP_PY_WIDTH +man.x*DAOJU_SIZE, MAP_PY_HEIGHT+man.y*DAOJU_SIZE, &daoju[Man]);
+				}
+				break;
+			case KBHIT_LEFT: //左
+				if (man.x > 0) {
+					putimage(MAP_PY_WIDTH +man.x*DAOJU_SIZE, MAP_PY_HEIGHT+man.y*DAOJU_SIZE, &daoju[create_map[man.y][man.x]]);
+					man.x--;
+					putimage(MAP_PY_WIDTH +man.x*DAOJU_SIZE, MAP_PY_HEIGHT+man.y*DAOJU_SIZE, &daoju[Man]);
+				}
+				break;
+			case KBHIT_RIGHT://右
+				if (man.x < MAP_WIDTH-1) {
+					putimage(MAP_PY_WIDTH +man.x*DAOJU_SIZE, MAP_PY_HEIGHT+man.y*DAOJU_SIZE, &daoju[create_map[man.y][man.x]]);
+					man.x++;
+					putimage(MAP_PY_WIDTH +man.x*DAOJU_SIZE, MAP_PY_HEIGHT+man.y*DAOJU_SIZE, &daoju[Man]);
+				}
+				break;
+			case 't': //切换
+				create_map[man.y][man.x] = (create_map[man.y][man.x] + 1)%ALL;
+				putimage(MAP_PY_WIDTH +man.x*DAOJU_SIZE, MAP_PY_HEIGHT+man.y*DAOJU_SIZE, &daoju[create_map[man.y][man.x]]);
+				break;
+			case 'k':
+				for(int i=0; i<MAP_HEIGHT; i++) {										  //显示游戏场景
+					for(int j=0; j<MAP_WIDTH; j++) {
+						map[i][j] = create_map[i][j];
+					}
+				}
+				man.x = 0;
+				man.y = 0;
+			case KBHIT_QUIT: //退出
+				return;
+			}
+		}
+		Sleep(100);
+	}
+}
+
+//游戏开始界面
+bool startInterface(IMAGE& img) {
+	cleardevice();
+
+	putimage(0, 0, &img);
+	
+	settextcolor(RGB(255, 0, 0));
+	settextstyle(25, 0, "偕体");
+
+	outtextxy((WINDOW_WIDTH)/5*2, WINDOW_HEIGHT/2, "开始游戏[s]");
+	outtextxy((WINDOW_WIDTH)/5*2, WINDOW_HEIGHT/2+30, "创建地图[c]");
+	outtextxy((WINDOW_WIDTH)/5*2, WINDOW_HEIGHT/2+30+30, "退出游戏[e]");
+
+	char ch = ' ';
+	while (ch != 's' && ch != 'c' && ch != 'e') {
+		ch = _getch();
+	}
+
+	if (ch == 's') {
+		dispiayScene(img);//显示游戏场景
+	}
+	else if (ch == 'c') {
+		createMap(img);	
+	}
+	else if (ch == 'e') {
+		return false;
+	}
+	return true;
+}
+
+int main(void) {
+	IMAGE img;
+	
+	initgraph(WINDOW_WIDTH, WINDOW_HEIGHT);//初始化绘图窗口
+
+	loadres(img);//加载游戏资源
+
+	while (startInterface(img)) {
+		//游戏开始界面
 	}
 
 	system("pause");
