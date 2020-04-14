@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "项目实现", "项目实现.vcxproj", "{4FE7364B-6C98-44D1-A15E-B4E4B27E52A9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "项目十", "..\项目十\项目十.vcxproj", "{2ADB7637-8C36-47D3-B62E-55BB9CFD327C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4FE7364B-6C98-44D1-A15E-B4E4B27E52A9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4FE7364B-6C98-44D1-A15E-B4E4B27E52A9}.Debug|Win32.Build.0 = Debug|Win32
+		{4FE7364B-6C98-44D1-A15E-B4E4B27E52A9}.Release|Win32.ActiveCfg = Release|Win32
+		{4FE7364B-6C98-44D1-A15E-B4E4B27E52A9}.Release|Win32.Build.0 = Release|Win32
+		{2ADB7637-8C36-47D3-B62E-55BB9CFD327C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2ADB7637-8C36-47D3-B62E-55BB9CFD327C}.Debug|Win32.Build.0 = Debug|Win32
+		{2ADB7637-8C36-47D3-B62E-55BB9CFD327C}.Release|Win32.ActiveCfg = Release|Win32
+		{2ADB7637-8C36-47D3-B62E-55BB9CFD327C}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

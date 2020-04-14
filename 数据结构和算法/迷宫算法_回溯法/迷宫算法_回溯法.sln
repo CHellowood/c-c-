@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "迷宫算法_回溯法", "迷宫算法_回溯法.vcxproj", "{08627C1B-714C-4A9F-9E5A-42C7D7103050}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{08627C1B-714C-4A9F-9E5A-42C7D7103050}.Debug|x64.ActiveCfg = Debug|x64
+		{08627C1B-714C-4A9F-9E5A-42C7D7103050}.Debug|x64.Build.0 = Debug|x64
+		{08627C1B-714C-4A9F-9E5A-42C7D7103050}.Debug|x86.ActiveCfg = Debug|Win32
+		{08627C1B-714C-4A9F-9E5A-42C7D7103050}.Debug|x86.Build.0 = Debug|Win32
+		{08627C1B-714C-4A9F-9E5A-42C7D7103050}.Release|x64.ActiveCfg = Release|x64
+		{08627C1B-714C-4A9F-9E5A-42C7D7103050}.Release|x64.Build.0 = Release|x64
+		{08627C1B-714C-4A9F-9E5A-42C7D7103050}.Release|x86.ActiveCfg = Release|Win32
+		{08627C1B-714C-4A9F-9E5A-42C7D7103050}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EFB42C5F-6EFE-4155-8F65-AC3A34BA5771}
+	EndGlobalSection
+EndGlobal

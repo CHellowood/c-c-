@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "面向对象", "面向对象.vcxproj", "{1596EF86-A3C4-4136-BD20-44152A4361A1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1596EF86-A3C4-4136-BD20-44152A4361A1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1596EF86-A3C4-4136-BD20-44152A4361A1}.Debug|Win32.Build.0 = Debug|Win32
+		{1596EF86-A3C4-4136-BD20-44152A4361A1}.Release|Win32.ActiveCfg = Release|Win32
+		{1596EF86-A3C4-4136-BD20-44152A4361A1}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

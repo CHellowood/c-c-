@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "指针练习", "指针练习.vcxproj", "{68693EE4-06DE-44BE-A552-2136E30D7F11}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{68693EE4-06DE-44BE-A552-2136E30D7F11}.Debug|Win32.ActiveCfg = Debug|Win32
+		{68693EE4-06DE-44BE-A552-2136E30D7F11}.Debug|Win32.Build.0 = Debug|Win32
+		{68693EE4-06DE-44BE-A552-2136E30D7F11}.Release|Win32.ActiveCfg = Release|Win32
+		{68693EE4-06DE-44BE-A552-2136E30D7F11}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
