@@ -63,6 +63,9 @@ CMFCPaintingView::CMFCPaintingView() noexcept
 	m_nLineStyle = DEFAULT_LINE_STYLE;
 	m_nLineWidth = DEFAULT_LINE_WIDTH;
 	m_color = DEFAULT_COLOR;
+
+	//开始录制元文件
+	m_dcMetaFile.Create();
 }
 
 CMFCPaintingView::~CMFCPaintingView()
@@ -79,7 +82,7 @@ BOOL CMFCPaintingView::PreCreateWindow(CREATESTRUCT& cs)
 
 // CMFCPaintingView 绘图
 
-void CMFCPaintingView::OnDraw(CDC* /*pDC*/)
+void CMFCPaintingView::OnDraw(CDC* pDC)
 {
 	CMFCPaintingDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
@@ -87,6 +90,21 @@ void CMFCPaintingView::OnDraw(CDC* /*pDC*/)
 		return;
 
 	// TODO: 在此处为本机数据添加绘制代码
+
+	//结束录制, 并返回录制的元文件
+	HMETAFILE metafile = m_dcMetaFile.Close();
+
+	//在pDC对象(设备)中播放元文件
+	pDC->PlayMetaFile(metafile);
+	
+	//开始录制元文件
+	m_dcMetaFile.Create();
+
+	//在m_dcMetaFile对象(设备)中播放元文件
+	m_dcMetaFile.PlayMetaFile(metafile);
+
+	//删除元文件
+	DeleteMetaFile(metafile);
 }
 
 //鼠标右键点击（弹起）
@@ -101,7 +119,7 @@ void CMFCPaintingView::OnRButtonUp(UINT /* nFlags */, CPoint point)
 	OnContextMenu(this, point);
 }
 
-//显示上下文菜单
+//显示上下文菜单(鼠标右键弹起时显示的菜单)
 void CMFCPaintingView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 {
 #ifndef SHARED_HANDLERS
@@ -200,31 +218,31 @@ void CMFCPaintingView::OnLButtonUp(UINT nFlags, CPoint point)
 
 	//m_bDown = FALSE;
 
-	CClientDC dc(this);
+//	CClientDC dc(this);
 	CPen pen(m_nLineStyle, m_nLineWidth, m_color);
 
 	//保存旧画笔对象
-	CPen* pPrevPen = dc.SelectObject(&pen); //选择新画笔对象
+	CPen* pPrevPen = m_dcMetaFile.SelectObject(&pen); //选择新画笔对象
 
 	switch (m_Paint) {
 	case Paint::DRAW_LINE:
 
 		//把画笔移动到鼠标左键按下的位置
-		dc.MoveTo(m_LButtonDownPoint);
+		m_dcMetaFile.MoveTo(m_LButtonDownPoint);
 		//在两点之间画线
-		dc.LineTo(point);
+		m_dcMetaFile.LineTo(point);
 		
 		break;
 	case Paint::DRAW_RECT:
 		
 		//画矩形
-		dc.Rectangle(CRect(m_LButtonDownPoint, point));
+		m_dcMetaFile.Rectangle(CRect(m_LButtonDownPoint, point));
 		
 		break;
 	case Paint::DRAW_ELLIPSE:
 		
 		//画椭圆
-		dc.Ellipse(CRect(m_LButtonDownPoint, point));
+		m_dcMetaFile.Ellipse(CRect(m_LButtonDownPoint, point));
 		
 		break;
 	case Paint::DRAW_PEN:
@@ -234,6 +252,8 @@ void CMFCPaintingView::OnLButtonUp(UINT nFlags, CPoint point)
 	default: 
 		break;
 	}
+
+	Invalidate();
 
 	CView::OnLButtonUp(nFlags, point);
 }
@@ -253,18 +273,20 @@ void CMFCPaintingView::OnMouseMove(UINT nFlags, CPoint point)
 
 	//画线(非直线)
 	if (m_bDown && m_Paint == Paint::DRAW_PEN) {
-		CClientDC dc(this);
+//		CClientDC dc(this);
 		CPen pen(m_nLineStyle, m_nLineWidth, m_color);
 
 		//保存旧画笔对象
-		CPen* pPrevPen = dc.SelectObject(&pen); //选择新画笔对象
+		CPen* pPrevPen = m_dcMetaFile.SelectObject(&pen); //选择新画笔对象
 
-		dc.MoveTo(m_LButtonDownPoint);
-		dc.LineTo(point);
+		m_dcMetaFile.MoveTo(m_LButtonDownPoint);
+		m_dcMetaFile.LineTo(point);
 		m_LButtonDownPoint = point;
 
 		//恢复旧画笔
-		dc.SelectObject(pPrevPen);
+		m_dcMetaFile.SelectObject(pPrevPen);
+
+		Invalidate();
 	}
 
 	////画线(直线) 

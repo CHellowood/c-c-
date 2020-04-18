@@ -74,9 +74,10 @@ public:
 	afx_msg void OnUpdateDrawPen(CCmdUI* pCmdUI);
 	afx_msg void OnDrawSet();
 protected:
-	int m_nLineStyle;  //线的样式
-	UINT m_nLineWidth; //画笔线宽
-	COLORREF m_color;  //画线颜色
+	int m_nLineStyle;         //线的样式
+	UINT m_nLineWidth;        //画笔线宽
+	COLORREF m_color;         //画线颜色
+	CMetaFileDC m_dcMetaFile; //元文件DC
 public:
 	afx_msg void OnLineStyle1();
 	afx_msg void OnUpdateLineStyle1(CCmdUI* pCmdUI);
