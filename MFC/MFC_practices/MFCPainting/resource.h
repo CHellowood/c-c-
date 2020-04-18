@@ -84,14 +84,22 @@
 #define IDS_EXPLORER                    305
 #define IDS_EDIT_MENU                   306
 #define IDB_BITMAP1                     310
-#define IDR_MENU1                       311
+#define IDR_RBUTTON_UP                  311
+#define IDD_SET_PEN                     312
+#define IDC_LINE_WIDTH                  1003
+#define IDC_PEN_COLOR                   1008
+#define IDC_LINE_STYLE1                 1021
+#define IDC_LINE_STYLE2                 1022
+#define IDC_LINE_STYLE3                 1023
+#define IDC_LINE_EXAMPLE                1026
+#define IDC_SLIDER1                     1027
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_Menu                         32773
 #define ID_32774                        32774
 #define ID_                             32775
 #define ID_DRAW_LINE                    32776
-#define ID_DRAW_                        32777
+#define ID_DRAW_SET                     32777
 #define ID_DRAW_RECT                    32778
 #define ID_DRAW_ELLIPSE                 32779
 #define ID_DRAW_PEN                     32780
@@ -111,9 +119,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        312
-#define _APS_NEXT_COMMAND_VALUE         32807
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_RESOURCE_VALUE        315
+#define _APS_NEXT_COMMAND_VALUE         32811
+#define _APS_NEXT_CONTROL_VALUE         1028
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

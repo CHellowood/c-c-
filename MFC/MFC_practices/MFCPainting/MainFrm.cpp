@@ -101,6 +101,34 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	DockPane(&m_wndMenuBar);
 	DockPane(&m_wndToolBar);
 
+	//用代码创建菜单
+	//画图菜单
+	CMenu menu;
+	
+	//创建画图菜单
+	menu.CreateMenu();
+
+	//画图菜单的子项
+	menu.AppendMenu(MF_STRING, ID_DRAW_LINE, _T("画线"));
+	menu.AppendMenu(MF_STRING, ID_DRAW_RECT, _T("画矩形"));
+	menu.AppendMenu(MF_STRING, ID_DRAW_ELLIPSE, _T("画椭圆"));
+	menu.AppendMenu(MF_STRING, ID_DRAW_PEN, _T("画笔"));
+	menu.AppendMenu(MF_STRING, ID_DRAW_SET, _T("设置"));
+	menu.AppendMenu(MF_STRING, ID_CLS, _T("清屏"));
+
+	////把画图菜单附加到菜单栏上(经典菜单的附加方式)
+	//GetMenu()->AppendMenu(MF_POPUP, (UINT)menu.m_hMenu, _T("画图"));
+
+	//把画图菜单附加到菜单栏上(菜单栏和工具栏的附加方式)
+	//FromHandle函数（参数：菜单句柄），根据菜单句柄获取菜单对象
+	//GetMenuBar函数（参数：无）：      获取菜单栏的对象的指针
+	//GetDefaultMenu函数（参数：无）：  获取菜单资源的句柄
+	CMenu* mu = CMenu::FromHandle(GetMenuBar()->GetDefaultMenu());
+	mu->AppendMenu(MF_POPUP, (UINT)menu.m_hMenu, _T("画图"));
+
+	//分离 CMenu 对象的一个Windows菜单并返回处理
+	menu.Detach();
+
 
 	// 启用 Visual Studio 2005 样式停靠窗口行为
 	CDockingManager::SetDockingMode(DT_SMART);

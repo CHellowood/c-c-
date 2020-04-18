@@ -16,6 +16,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+#include "SetPen.h"
 
 
 // CMFCPaintingView
@@ -40,6 +41,13 @@ BEGIN_MESSAGE_MAP(CMFCPaintingView, CView)
 	ON_UPDATE_COMMAND_UI(ID_DRAW_RECT, &CMFCPaintingView::OnUpdateDrawRect)
 	ON_UPDATE_COMMAND_UI(ID_DRAW_ELLIPSE, &CMFCPaintingView::OnUpdateDrawEllipse)
 	ON_UPDATE_COMMAND_UI(ID_DRAW_PEN, &CMFCPaintingView::OnUpdateDrawPen)
+	ON_COMMAND(ID_DRAW_SET, &CMFCPaintingView::OnDrawSet)
+	ON_COMMAND(IDC_LINE_STYLE1, &CMFCPaintingView::OnLineStyle1)
+	ON_UPDATE_COMMAND_UI(IDC_LINE_STYLE1, &CMFCPaintingView::OnUpdateLineStyle1)
+	ON_COMMAND(IDC_LINE_STYLE2, &CMFCPaintingView::OnLineStyle2)
+	ON_UPDATE_COMMAND_UI(IDC_LINE_STYLE2, &CMFCPaintingView::OnUpdateLineStyle2)
+	ON_COMMAND(IDC_LINE_STYLE3, &CMFCPaintingView::OnLineStyle3)
+	ON_UPDATE_COMMAND_UI(IDC_LINE_STYLE3, &CMFCPaintingView::OnUpdateLineStyle3)
 END_MESSAGE_MAP()
 
 // CMFCPaintingView 构造/析构
@@ -52,6 +60,9 @@ CMFCPaintingView::CMFCPaintingView() noexcept
 	m_bGline = FALSE;
 	m_MPrevPoint = 0;
 	m_Paint = Paint::DRAW_LINE;
+	m_nLineStyle = DEFAULT_LINE_STYLE;
+	m_nLineWidth = DEFAULT_LINE_WIDTH;
+	m_color = DEFAULT_COLOR;
 }
 
 CMFCPaintingView::~CMFCPaintingView()
@@ -95,7 +106,7 @@ void CMFCPaintingView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 {
 #ifndef SHARED_HANDLERS
 	//theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EDIT, point.x, point.y, this, TRUE);
-	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_MENU1, point.x, point.y, this, TRUE);
+	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_RBUTTON_UP, point.x, point.y, this, TRUE);
 #endif
 }
 
@@ -190,7 +201,7 @@ void CMFCPaintingView::OnLButtonUp(UINT nFlags, CPoint point)
 	//m_bDown = FALSE;
 
 	CClientDC dc(this);
-	CPen pen(PS_SOLID, 1, RGB(128, 0, 255));
+	CPen pen(m_nLineStyle, m_nLineWidth, m_color);
 
 	//保存旧画笔对象
 	CPen* pPrevPen = dc.SelectObject(&pen); //选择新画笔对象
@@ -243,7 +254,7 @@ void CMFCPaintingView::OnMouseMove(UINT nFlags, CPoint point)
 	//画线(非直线)
 	if (m_bDown && m_Paint == Paint::DRAW_PEN) {
 		CClientDC dc(this);
-		CPen pen(PS_SOLID, 1, RGB(128, 0, 255));
+		CPen pen(m_nLineStyle, m_nLineWidth, m_color);
 
 		//保存旧画笔对象
 		CPen* pPrevPen = dc.SelectObject(&pen); //选择新画笔对象
@@ -427,7 +438,7 @@ void CMFCPaintingView::OnUpdateDrawRect(CCmdUI* pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	
-	//如果m_Paint等于Paint::DRAW_RECT， 则在画图菜单选项 画矩形 前打勾
+	//如果m_Paint等于Paint::DRAW_RECT， 则在工具栏（菜单栏）打上标记
 	pCmdUI->SetCheck(m_Paint == Paint::DRAW_RECT);
 }
 
@@ -436,7 +447,7 @@ void CMFCPaintingView::OnUpdateDrawEllipse(CCmdUI* pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 
-	//如果m_Paint等于Paint::DRAW_ELLIPSE， 则在画图菜单选项 画椭圆 前打勾
+	//如果m_Paint等于Paint::DRAW_ELLIPSE， 则在工具栏（菜单栏）打上标记
 	pCmdUI->SetCheck(m_Paint == Paint::DRAW_ELLIPSE);
 }
 
@@ -445,6 +456,68 @@ void CMFCPaintingView::OnUpdateDrawPen(CCmdUI* pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 
-	//如果m_Paint等于Paint::DRAW_PEN， 则在画图菜单选项 画笔 前打勾
+	//如果m_Paint等于Paint::DRAW_PEN， 则在工具栏（菜单栏）打上标记
 	pCmdUI->SetCheck(m_Paint == Paint::DRAW_PEN);
+}
+
+
+void CMFCPaintingView::OnDrawSet()
+{
+	// TODO: 在此添加命令处理程序代码
+	SetPen setpen(m_nLineStyle, m_nLineWidth, m_color);
+
+	if (IDOK == setpen.DoModal()) {
+		m_nLineStyle = setpen.m_nLineStyle;
+		m_nLineWidth = setpen.m_nLineWidth;
+		m_color      = setpen.m_color;
+	}
+}
+
+//把样式改为 实线
+void CMFCPaintingView::OnLineStyle1()
+{
+	// TODO: 在此添加命令处理程序代码
+	m_nLineStyle = PS_SOLID;
+}
+
+
+void CMFCPaintingView::OnUpdateLineStyle1(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+
+	//如果m_nLineStyle等于PS_SOLID， 则在工具栏（菜单栏）打上标记
+	pCmdUI->SetCheck(m_nLineStyle == PS_SOLID);
+}
+
+//把样式改为 虚线
+void CMFCPaintingView::OnLineStyle2()
+{
+	// TODO: 在此添加命令处理程序代码
+	m_nLineStyle = PS_DASH;
+}
+
+
+void CMFCPaintingView::OnUpdateLineStyle2(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+
+	//如果m_nLineStyle等于PS_DASH， 则在工具栏（菜单栏）打上标记
+	pCmdUI->SetCheck(m_nLineStyle == PS_DASH);
+}
+
+//把样式改为 点线
+void CMFCPaintingView::OnLineStyle3()
+{
+	// TODO: 在此添加命令处理程序代码
+
+	m_nLineStyle = PS_DOT;
+}
+
+
+void CMFCPaintingView::OnUpdateLineStyle3(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+
+	//如果m_nLineStyle等于PS_DOT， 则在工具栏（菜单栏）打上标记
+	pCmdUI->SetCheck(m_nLineStyle == PS_DOT);
 }

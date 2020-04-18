@@ -172,7 +172,7 @@ void CMFCPaintingApp::PreLoadState()
 	GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EXPLORER);
 
 	//加载鼠标右键点击弹出的菜单窗口的资源
-	GetContextMenuManager()->AddMenu(L"画图", IDR_MENU1);
+	GetContextMenuManager()->AddMenu(L"画图", IDR_RBUTTON_UP);
 }
 
 void CMFCPaintingApp::LoadCustomState()

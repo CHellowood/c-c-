@@ -72,6 +72,18 @@ public:
 	afx_msg void OnUpdateDrawRect(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateDrawEllipse(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateDrawPen(CCmdUI* pCmdUI);
+	afx_msg void OnDrawSet();
+protected:
+	int m_nLineStyle;  //线的样式
+	UINT m_nLineWidth; //画笔线宽
+	COLORREF m_color;  //画线颜色
+public:
+	afx_msg void OnLineStyle1();
+	afx_msg void OnUpdateLineStyle1(CCmdUI* pCmdUI);
+	afx_msg void OnLineStyle2();
+	afx_msg void OnUpdateLineStyle2(CCmdUI* pCmdUI);
+	afx_msg void OnLineStyle3();
+	afx_msg void OnUpdateLineStyle3(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // MFCPaintingView.cpp 中的调试版本
