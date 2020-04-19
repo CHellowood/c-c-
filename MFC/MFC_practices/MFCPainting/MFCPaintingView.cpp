@@ -64,8 +64,6 @@ CMFCPaintingView::CMFCPaintingView() noexcept
 	m_nLineWidth = DEFAULT_LINE_WIDTH;
 	m_color = DEFAULT_COLOR;
 
-	//开始录制元文件
-	m_dcMetaFile.Create();
 }
 
 CMFCPaintingView::~CMFCPaintingView()
@@ -91,20 +89,9 @@ void CMFCPaintingView::OnDraw(CDC* pDC)
 
 	// TODO: 在此处为本机数据添加绘制代码
 
-	//结束录制, 并返回录制的元文件
-	HMETAFILE metafile = m_dcMetaFile.Close();
-
-	//在pDC对象(设备)中播放元文件
-	pDC->PlayMetaFile(metafile);
-	
-	//开始录制元文件
-	m_dcMetaFile.Create();
-
-	//在m_dcMetaFile对象(设备)中播放元文件
-	m_dcMetaFile.PlayMetaFile(metafile);
-
-	//删除元文件
-	DeleteMetaFile(metafile);
+	CRect rect;
+	GetClientRect(&rect);
+	pDC->BitBlt(0, 0, rect.Width(), rect.Height(), &m_dcCompatible, 0, 0, SRCCOPY);
 }
 
 //鼠标右键点击（弹起）
@@ -160,6 +147,28 @@ void CMFCPaintingView::OnLButtonDown(UINT nFlags, CPoint point)
 	//保存鼠标左键按下时的位置
 	m_LButtonDownPoint = point;
 	if (m_Paint == Paint::DRAW_PEN) m_bDown = TRUE;
+
+	// 初始化兼容DC(begin)
+	if (!m_dcCompatible.m_hDC) {
+		CClientDC dc(this);
+		//创建兼容DC
+		m_dcCompatible.CreateCompatibleDC(&dc);
+
+		CRect rect;
+		//获取客户区(绘图区)坐标
+		GetClientRect(&rect);
+
+		CBitmap bitmap;
+		//创建兼容Bitmap(Bitmap: 默认为黑色)
+		bitmap.CreateCompatibleBitmap(&dc, rect.Width(), rect.Height());
+
+		//选择新的Bitmap对象
+		m_dcCompatible.SelectObject(&bitmap);
+
+		//把颜色改为白色(用纯色填充矩形)
+		m_dcCompatible.FillSolidRect(&rect, RGB(255, 255, 255));
+
+	}// 初始化兼容DC(end)
 
 	CView::OnLButtonDown(nFlags, point);
 }
@@ -222,27 +231,27 @@ void CMFCPaintingView::OnLButtonUp(UINT nFlags, CPoint point)
 	CPen pen(m_nLineStyle, m_nLineWidth, m_color);
 
 	//保存旧画笔对象
-	CPen* pPrevPen = m_dcMetaFile.SelectObject(&pen); //选择新画笔对象
+	CPen* pPrevPen = m_dcCompatible.SelectObject(&pen); //选择新画笔对象
 
 	switch (m_Paint) {
 	case Paint::DRAW_LINE:
 
 		//把画笔移动到鼠标左键按下的位置
-		m_dcMetaFile.MoveTo(m_LButtonDownPoint);
+		m_dcCompatible.MoveTo(m_LButtonDownPoint);
 		//在两点之间画线
-		m_dcMetaFile.LineTo(point);
+		m_dcCompatible.LineTo(point);
 		
 		break;
 	case Paint::DRAW_RECT:
 		
 		//画矩形
-		m_dcMetaFile.Rectangle(CRect(m_LButtonDownPoint, point));
+		m_dcCompatible.Rectangle(CRect(m_LButtonDownPoint, point));
 		
 		break;
 	case Paint::DRAW_ELLIPSE:
 		
 		//画椭圆
-		m_dcMetaFile.Ellipse(CRect(m_LButtonDownPoint, point));
+		m_dcCompatible.Ellipse(CRect(m_LButtonDownPoint, point));
 		
 		break;
 	case Paint::DRAW_PEN:
@@ -277,14 +286,14 @@ void CMFCPaintingView::OnMouseMove(UINT nFlags, CPoint point)
 		CPen pen(m_nLineStyle, m_nLineWidth, m_color);
 
 		//保存旧画笔对象
-		CPen* pPrevPen = m_dcMetaFile.SelectObject(&pen); //选择新画笔对象
+		CPen* pPrevPen = m_dcCompatible.SelectObject(&pen); //选择新画笔对象
 
-		m_dcMetaFile.MoveTo(m_LButtonDownPoint);
-		m_dcMetaFile.LineTo(point);
+		m_dcCompatible.MoveTo(m_LButtonDownPoint);
+		m_dcCompatible.LineTo(point);
 		m_LButtonDownPoint = point;
 
 		//恢复旧画笔
-		m_dcMetaFile.SelectObject(pPrevPen);
+		m_dcCompatible.SelectObject(pPrevPen);
 
 		Invalidate();
 	}
@@ -443,7 +452,16 @@ void CMFCPaintingView::OnDrawPen()
 void CMFCPaintingView::OnCls()
 {
 	// TODO: 在此添加命令处理程序代码
-	Invalidate();
+
+	//Invalidate();
+
+	if (m_dcCompatible.m_hDC) {
+		CRect rect;
+		GetClientRect(&rect);
+		m_dcCompatible.FillSolidRect(&rect, RGB(255, 255, 255));
+
+		Invalidate();
+	}
 }
 
 
