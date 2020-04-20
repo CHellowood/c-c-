@@ -80,6 +80,8 @@ public:
 	afx_msg void OnUpdateLineStyle2(CCmdUI* pCmdUI);
 	afx_msg void OnLineStyle3();
 	afx_msg void OnUpdateLineStyle3(CCmdUI* pCmdUI);
+	afx_msg void OnFileRead();
+	afx_msg void OnFileWrite();
 };
 
 #ifndef _DEBUG  // MFCPaintingView.cpp 中的调试版本

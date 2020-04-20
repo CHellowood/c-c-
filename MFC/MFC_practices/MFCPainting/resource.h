@@ -92,7 +92,6 @@
 #define IDC_LINE_STYLE2                 1022
 #define IDC_LINE_STYLE3                 1023
 #define IDC_LINE_EXAMPLE                1026
-#define IDC_SLIDER1                     1027
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_Menu                         32773
@@ -114,13 +113,18 @@
 #define ID_32804                        32804
 #define ID__DRAW_RECT                   32805
 #define ID__                            32806
+#define ID_32811                        32811
+#define ID_32812                        32812
+#define ID_FILE_READ                    32813
+#define ID_FILE_W                       32814
+#define ID_FILE_WRITE                   32815
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        315
-#define _APS_NEXT_COMMAND_VALUE         32811
+#define _APS_NEXT_COMMAND_VALUE         32816
 #define _APS_NEXT_CONTROL_VALUE         1028
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
