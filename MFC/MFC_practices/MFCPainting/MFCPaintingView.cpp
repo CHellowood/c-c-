@@ -59,15 +59,26 @@ CMFCPaintingView::CMFCPaintingView() noexcept
 	m_bDown = FALSE;
 	m_bGline = FALSE;
 	m_MPrevPoint = 0;
-	m_Paint = Paint::DRAW_LINE;
+	m_DrawType = DrawType::DRAW_LINE;
 	m_nLineStyle = DEFAULT_LINE_STYLE;
 	m_nLineWidth = DEFAULT_LINE_WIDTH;
 	m_color = DEFAULT_COLOR;
-
+	m_tempGraph = nullptr;
 }
 
 CMFCPaintingView::~CMFCPaintingView()
 {
+	//清除m_graphs的数据
+	
+	int n = m_graphs.GetSize();
+
+	//释放内存
+	for (int i = 0; i < n; i++) {
+		delete m_graphs.GetAt(i);
+	}
+
+	//删除所有元素
+	m_graphs.RemoveAll();
 }
 
 BOOL CMFCPaintingView::PreCreateWindow(CREATESTRUCT& cs)
@@ -89,9 +100,12 @@ void CMFCPaintingView::OnDraw(CDC* pDC)
 
 	// TODO: 在此处为本机数据添加绘制代码
 
-	CRect rect;
-	GetClientRect(&rect);
-	pDC->BitBlt(0, 0, rect.Width(), rect.Height(), &m_dcCompatible, 0, 0, SRCCOPY);
+	int n = m_graphs.GetSize();
+
+	//重绘所有图形
+	for (int i = 0; i < n; i++) {
+		m_graphs.GetAt(i)->Draw(pDC);
+	}
 }
 
 //鼠标右键点击（弹起）
@@ -146,29 +160,16 @@ void CMFCPaintingView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	//保存鼠标左键按下时的位置
 	m_LButtonDownPoint = point;
-	if (m_Paint == Paint::DRAW_PEN) m_bDown = TRUE;
+	
+	//当前绘图模式是画笔
+	if (m_DrawType == DrawType::DRAW_PEN) {
+		m_bDown = TRUE;
 
-	// 初始化兼容DC(begin)
-	if (!m_dcCompatible.m_hDC) {
-		CClientDC dc(this);
-		//创建兼容DC
-		m_dcCompatible.CreateCompatibleDC(&dc);
-
-		CRect rect;
-		//获取客户区(绘图区)坐标
-		GetClientRect(&rect);
-
-		CBitmap bitmap;
-		//创建兼容Bitmap(Bitmap: 默认为黑色)
-		bitmap.CreateCompatibleBitmap(&dc, rect.Width(), rect.Height());
-
-		//选择新的Bitmap对象
-		m_dcCompatible.SelectObject(&bitmap);
-
-		//把颜色改为白色(用纯色填充矩形)
-		m_dcCompatible.FillSolidRect(&rect, RGB(255, 255, 255));
-
-	}// 初始化兼容DC(end)
+		m_tempGraph = new Graph((UINT)m_DrawType, m_nLineStyle, m_nLineWidth, m_color);
+		
+		//保存画线的起始坐标
+		m_tempGraph->AddPoint(point);
+	}
 
 	CView::OnLButtonDown(nFlags, point);
 }
@@ -227,34 +228,34 @@ void CMFCPaintingView::OnLButtonUp(UINT nFlags, CPoint point)
 
 	//m_bDown = FALSE;
 
-//	CClientDC dc(this);
+	CClientDC dc(this);
 	CPen pen(m_nLineStyle, m_nLineWidth, m_color);
 
 	//保存旧画笔对象
-	CPen* pPrevPen = m_dcCompatible.SelectObject(&pen); //选择新画笔对象
+	CPen* pPrevPen = dc.SelectObject(&pen); //选择新画笔对象
 
-	switch (m_Paint) {
-	case Paint::DRAW_LINE:
+	switch (m_DrawType) {
+	case DrawType::DRAW_LINE:
 
 		//把画笔移动到鼠标左键按下的位置
-		m_dcCompatible.MoveTo(m_LButtonDownPoint);
+		dc.MoveTo(m_LButtonDownPoint);
 		//在两点之间画线
-		m_dcCompatible.LineTo(point);
+		dc.LineTo(point);
 		
 		break;
-	case Paint::DRAW_RECT:
+	case DrawType::DRAW_RECT:
 		
 		//画矩形
-		m_dcCompatible.Rectangle(CRect(m_LButtonDownPoint, point));
+		dc.Rectangle(CRect(m_LButtonDownPoint, point));
 		
 		break;
-	case Paint::DRAW_ELLIPSE:
+	case DrawType::DRAW_ELLIPSE:
 		
 		//画椭圆
-		m_dcCompatible.Ellipse(CRect(m_LButtonDownPoint, point));
+		dc.Ellipse(CRect(m_LButtonDownPoint, point));
 		
 		break;
-	case Paint::DRAW_PEN:
+	case DrawType::DRAW_PEN:
 		//画笔在 OnMouseMove 函数里实现
 		m_bDown = FALSE;
 		break;
@@ -262,7 +263,19 @@ void CMFCPaintingView::OnLButtonUp(UINT nFlags, CPoint point)
 		break;
 	}
 
-	Invalidate();
+	//当前绘图模式不是画笔, 保存两点坐标
+	//除了画笔外, 其他绘图模式绘制的图形都是有两点坐标绘制出来的
+	if (m_DrawType != DrawType::DRAW_PEN) {
+		Graph* graph = new Graph((UINT)m_DrawType, m_nLineStyle, m_nLineWidth, m_color);
+		graph->AddPoint(m_LButtonDownPoint, point);
+		m_graphs.Add(graph);
+	}
+	else {
+		//保存画笔模式绘制的图形的结束点坐标
+		m_tempGraph->AddPoint(point);
+		m_graphs.Add(m_tempGraph);
+		m_tempGraph = nullptr;
+	}
 
 	CView::OnLButtonUp(nFlags, point);
 }
@@ -281,21 +294,25 @@ void CMFCPaintingView::OnMouseMove(UINT nFlags, CPoint point)
 	}*/
 
 	//画线(非直线)
-	if (m_bDown && m_Paint == Paint::DRAW_PEN) {
-//		CClientDC dc(this);
+	if (m_bDown && m_DrawType == DrawType::DRAW_PEN) {
+		CClientDC dc(this);
 		CPen pen(m_nLineStyle, m_nLineWidth, m_color);
 
 		//保存旧画笔对象
-		CPen* pPrevPen = m_dcCompatible.SelectObject(&pen); //选择新画笔对象
+		CPen* pPrevPen = dc.SelectObject(&pen); //选择新画笔对象
 
-		m_dcCompatible.MoveTo(m_LButtonDownPoint);
-		m_dcCompatible.LineTo(point);
+		//画线
+		dc.MoveTo(m_LButtonDownPoint);
+		dc.LineTo(point);
+
+		//把当前坐标设为新的起点
 		m_LButtonDownPoint = point;
 
 		//恢复旧画笔
-		m_dcCompatible.SelectObject(pPrevPen);
+		dc.SelectObject(pPrevPen);
 
-		Invalidate();
+		//保存当前点坐标
+		m_tempGraph->AddPoint(point);
 	}
 
 	////画线(直线) 
@@ -424,28 +441,28 @@ void CMFCPaintingView::OnTimer(UINT_PTR nIDEvent)
 void CMFCPaintingView::OnDrawLine()
 {
 	// TODO: 在此添加命令处理程序代码
-	m_Paint = Paint::DRAW_LINE;
+	m_DrawType = DrawType::DRAW_LINE;
 }
 
 
 void CMFCPaintingView::OnDrawRect()
 {
 	// TODO: 在此添加命令处理程序代码
-	m_Paint = Paint::DRAW_RECT;
+	m_DrawType = DrawType::DRAW_RECT;
 }
 
 
 void CMFCPaintingView::OnDrawEllipse()
 {
 	// TODO: 在此添加命令处理程序代码
-	m_Paint = Paint::DRAW_ELLIPSE;
+	m_DrawType = DrawType::DRAW_ELLIPSE;
 }
 
 
 void CMFCPaintingView::OnDrawPen()
 {
 	// TODO: 在此添加命令处理程序代码
-	m_Paint = Paint::DRAW_PEN;
+	m_DrawType = DrawType::DRAW_PEN;
 }
 
 
@@ -455,13 +472,26 @@ void CMFCPaintingView::OnCls()
 
 	//Invalidate();
 
-	if (m_dcCompatible.m_hDC) {
+	/*if (m_dcCompatible.m_hDC) {
 		CRect rect;
 		GetClientRect(&rect);
 		m_dcCompatible.FillSolidRect(&rect, RGB(255, 255, 255));
 
 		Invalidate();
+	}*/
+
+	int n = m_graphs.GetSize();
+
+	//释放内存
+	for (int i = 0; i < n; i++) {
+		delete m_graphs.GetAt(i);
 	}
+
+	//删除所有元素
+	m_graphs.RemoveAll();
+
+	//清屏
+	Invalidate();
 }
 
 
@@ -470,7 +500,7 @@ void CMFCPaintingView::OnUpdateDrawLine(CCmdUI* pCmdUI)
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	
 	//如果m_Paint等于Paint::DRAW_LINE， 则在画图菜单选项 画线 前打勾
-	pCmdUI->SetCheck(m_Paint == Paint::DRAW_LINE);
+	pCmdUI->SetCheck(m_DrawType == DrawType::DRAW_LINE);
 }
 
 
@@ -479,7 +509,7 @@ void CMFCPaintingView::OnUpdateDrawRect(CCmdUI* pCmdUI)
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	
 	//如果m_Paint等于Paint::DRAW_RECT， 则在工具栏（菜单栏）打上标记
-	pCmdUI->SetCheck(m_Paint == Paint::DRAW_RECT);
+	pCmdUI->SetCheck(m_DrawType == DrawType::DRAW_RECT);
 }
 
 
@@ -488,7 +518,7 @@ void CMFCPaintingView::OnUpdateDrawEllipse(CCmdUI* pCmdUI)
 	// TODO: 在此添加命令更新用户界面处理程序代码
 
 	//如果m_Paint等于Paint::DRAW_ELLIPSE， 则在工具栏（菜单栏）打上标记
-	pCmdUI->SetCheck(m_Paint == Paint::DRAW_ELLIPSE);
+	pCmdUI->SetCheck(m_DrawType == DrawType::DRAW_ELLIPSE);
 }
 
 
@@ -497,7 +527,7 @@ void CMFCPaintingView::OnUpdateDrawPen(CCmdUI* pCmdUI)
 	// TODO: 在此添加命令更新用户界面处理程序代码
 
 	//如果m_Paint等于Paint::DRAW_PEN， 则在工具栏（菜单栏）打上标记
-	pCmdUI->SetCheck(m_Paint == Paint::DRAW_PEN);
+	pCmdUI->SetCheck(m_DrawType == DrawType::DRAW_PEN);
 }
 
 

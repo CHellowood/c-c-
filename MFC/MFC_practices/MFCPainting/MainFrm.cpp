@@ -124,7 +124,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//GetMenuBar函数（参数：无）：      获取菜单栏的对象的指针
 	//GetDefaultMenu函数（参数：无）：  获取菜单资源的句柄
 	CMenu* mu = CMenu::FromHandle(GetMenuBar()->GetDefaultMenu());
-	mu->AppendMenu(MF_POPUP, (UINT)menu.m_hMenu, _T("画图"));
+	mu->AppendMenu(MF_POPUP, (UINT_PTR)menu.m_hMenu, _T("画图"));
 
 	//分离 CMenu 对象的一个Windows菜单并返回处理
 	menu.Detach();

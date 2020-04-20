@@ -142,7 +142,7 @@ BOOL SetPen::OnInitDialog()
 				  // 异常: OCX 属性页应返回 FALSE
 }
 
-
+//单击(拉动)水平滑动条
 void SetPen::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值

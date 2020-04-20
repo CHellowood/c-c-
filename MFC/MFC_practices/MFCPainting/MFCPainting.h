@@ -9,6 +9,13 @@
 
 #include "resource.h"       // 主符号
 
+//绘图模式
+enum class DrawType {
+	DRAW_LINE,    //画线
+	DRAW_RECT,    //画矩形
+	DRAW_ELLIPSE, //画椭圆
+	DRAW_PEN      //画笔
+};
 
 // CMFCPaintingApp:
 // 有关此类的实现，请参阅 MFCPainting.cpp

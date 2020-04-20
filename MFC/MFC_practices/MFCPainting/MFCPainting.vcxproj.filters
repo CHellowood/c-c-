@@ -57,6 +57,9 @@
     <ClInclude Include="SetPen.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Redraw.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCPainting.cpp">
@@ -90,6 +93,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SetPen.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Redraw.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -4,15 +4,9 @@
 
 #pragma once
 
-#define ID_TIMER_TEXT 2020
+#include "Redraw.h"
 
-//画图菜单
-typedef enum class PaintMenu {
-	DRAW_LINE,    //画线
-	DRAW_RECT,    //画矩形
-	DRAW_ELLIPSE, //画椭圆
-	DRAW_PEN      //画笔
-}Paint; 
+#define ID_TIMER_TEXT 2020
 
 class CMFCPaintingView : public CView
 {
@@ -58,7 +52,7 @@ protected:
 	bool   m_bDown;            //鼠标左键按下
 	bool   m_bGline;           //鼠标按下后是否有画线
 	CPoint m_MPrevPoint;       //保存鼠标按下后画的线的结束位置
-	Paint  m_Paint;            //画形
+	DrawType  m_DrawType;      //绘图模式
 
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -77,7 +71,8 @@ protected:
 	int m_nLineStyle;         //线的样式
 	UINT m_nLineWidth;        //画笔线宽
 	COLORREF m_color;         //画线颜色
-	CDC m_dcCompatible;       //兼容DC
+	CArray<Graph*> m_graphs;  //自定义重绘
+	Graph* m_tempGraph;       //用来临时保存画笔画的线的所有坐标
 public:
 	afx_msg void OnLineStyle1();
 	afx_msg void OnUpdateLineStyle1(CCmdUI* pCmdUI);
