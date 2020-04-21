@@ -5,6 +5,9 @@
 class Graph : public CObject
 {
 public:
+	Graph() noexcept;
+	DECLARE_SERIAL(Graph); // 声明序列号
+
 	Graph(UINT drawType, UINT lineStyle, UINT lineWidth, COLORREF color);
 
 	//添加一个坐标
@@ -22,5 +25,7 @@ protected:
 	UINT m_nLineWidth;       //画线宽度
 	COLORREF m_color;        //画线颜色
 	CArray<CPoint> m_points; //图形坐标
+public:
+	virtual void Serialize(CArchive& ar);
 };
 

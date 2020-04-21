@@ -11,6 +11,7 @@
 #endif
 
 #include "MFCPaintingDoc.h"
+#include "MFCPaintingView.h"
 
 #include <propkey.h>
 
@@ -56,14 +57,38 @@ BOOL CMFCPaintingDoc::OnNewDocument()
 
 void CMFCPaintingDoc::Serialize(CArchive& ar)
 {
+	POSITION pos = GetFirstViewPosition();
+	CMFCPaintingView* pView = (CMFCPaintingView*)GetNextView(pos);
+
+	// 图形数
+	//int n = pView->m_graphs.GetSize();
+
 	if (ar.IsStoring())
 	{
 		// TODO:  在此添加存储代码
+		
+		//// 保存图形数
+		//ar << n;
+		//// 保存图形数据
+		//for (int i = 0; i < n; i++) {
+		//	ar << pView->m_graphs.GetAt(i);
+		//}
 	}
 	else
 	{
 		// TODO:  在此添加加载代码
+
+		//// 读取图形数
+		//ar >> n;
+		//// 读取图形数据
+		//for (int i = 0; i < n; i++) {
+		//	Graph* graph;
+		//	ar >> graph;
+		//	pView->m_graphs.Add(graph);
+		//}
 	}
+	
+	pView->m_graphs.Serialize(ar);
 }
 
 #ifdef SHARED_HANDLERS

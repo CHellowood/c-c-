@@ -2,6 +2,12 @@
 #include "Redraw.h"
 #include "MFCPainting.h"
 
+IMPLEMENT_SERIAL(Graph, CObject, 1); // 实现序列号
+
+Graph::Graph() noexcept
+{
+}
+
 Graph::Graph(UINT drawType, UINT lineStyle, UINT lineWidth, COLORREF color)
 	:m_DrawType(drawType), m_nLineStyle(lineStyle), m_nLineWidth(lineWidth)
 	,m_color(color)
@@ -54,4 +60,18 @@ void Graph::Draw(CDC* pDC)
 	default:
 		break;
 	}
+}
+
+
+void Graph::Serialize(CArchive& ar)
+{
+	if (ar.IsStoring())
+	{	// storing code 保存数据
+		ar << m_DrawType << m_nLineStyle << m_nLineWidth << m_color;
+	}
+	else
+	{	// loading code 读取数据
+		ar >> m_DrawType >> m_nLineStyle >> m_nLineWidth >> m_color;
+	}
+	m_points.Serialize(ar);
 }

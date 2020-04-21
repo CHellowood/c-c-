@@ -106,7 +106,7 @@ void CMFCPaintingView::OnDraw(CDC* pDC)
 
 	//重绘所有图形
 	for (int i = 0; i < n; i++) {
-		m_graphs.GetAt(i)->Draw(pDC);
+		((Graph*)(m_graphs.GetAt(i)))->Draw(pDC);
 	}
 }
 
@@ -597,59 +597,59 @@ void CMFCPaintingView::OnUpdateLineStyle3(CCmdUI* pCmdUI)
 
 void CMFCPaintingView::OnFileRead()
 {
-	// TODO: 在此添加命令处理程序代码
+	//// TODO: 在此添加命令处理程序代码
 
-	// TRUE 读文件, FALSE 写文件 
-	CFileDialog fileDlg(TRUE);
+	//// TRUE 读文件, FALSE 写文件 
+	//CFileDialog fileDlg(TRUE);
 
-	if (IDOK == fileDlg.DoModal()) {
-		
-		// 获取文件名(完整的路径)
-		CString fileName = fileDlg.GetPathName();
+	//if (IDOK == fileDlg.DoModal()) {
+	//	
+	//	// 获取文件名(完整的路径)
+	//	CString fileName = fileDlg.GetPathName();
 
-		// 以读文件的方式打开文件
-		CFile file(fileName,  CFile::modeRead);
+	//	// 以读文件的方式打开文件
+	//	CFile file(fileName,  CFile::modeRead);
 
-		TCHAR* str;
-		// 获取文件长度
-		int len = file.GetLength();
-		int chars = len	/ sizeof(TCHAR);
-		
-		str = new TCHAR[chars + 1];
+	//	TCHAR* str;
+	//	// 获取文件长度
+	//	int len = file.GetLength();
+	//	int chars = len	/ sizeof(TCHAR);
+	//	
+	//	str = new TCHAR[chars + 1];
 
-		// 读取内容(注意: 一定要记得添加字符串结束符)
-		file.Read(str, len);
-		
-		// 添加字符串结束符
-		str[chars] = 0;
+	//	// 读取内容(注意: 一定要记得添加字符串结束符)
+	//	file.Read(str, len);
+	//	
+	//	// 添加字符串结束符
+	//	str[chars] = 0;
 
-		// 关闭文件
-		file.Close();
+	//	// 关闭文件
+	//	file.Close();
 
-		MessageBox(str);
-		delete[] str;
-	}
+	//	MessageBox(str);
+	//	delete[] str;
+	//}
 }
 
 
 void CMFCPaintingView::OnFileWrite()
 {
-	// TODO: 在此添加命令处理程序代码
+	//// TODO: 在此添加命令处理程序代码
 
-	// TRUE 读文件, FALSE 写文件 
-	CFileDialog fileDlg(FALSE);
+	//// TRUE 读文件, FALSE 写文件 
+	//CFileDialog fileDlg(FALSE);
 
-	if (IDOK == fileDlg.DoModal()) {
-		// 获取文件名(完整的路径)
-		CString fileName = fileDlg.GetPathName();
-		// 以写文件的方式打开文件, 如果文件不存在, 则创建一个文件
-		CFile file(fileName, CFile::modeCreate | CFile::modeWrite);
+	//if (IDOK == fileDlg.DoModal()) {
+	//	// 获取文件名(完整的路径)
+	//	CString fileName = fileDlg.GetPathName();
+	//	// 以写文件的方式打开文件, 如果文件不存在, 则创建一个文件
+	//	CFile file(fileName, CFile::modeCreate | CFile::modeWrite);
 
-		CString str("file test");
-		// 写入文件
-		file.Write(str, str.GetLength()*sizeof(TCHAR));
+	//	CString str("file test");
+	//	// 写入文件
+	//	file.Write(str, str.GetLength()*sizeof(TCHAR));
 
-		// 关闭文件
-		file.Close();
-	}
+	//	// 关闭文件
+	//	file.Close();
+	//}
 }

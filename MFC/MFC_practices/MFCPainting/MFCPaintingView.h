@@ -71,9 +71,11 @@ protected:
 	int m_nLineStyle;         //线的样式
 	UINT m_nLineWidth;        //画笔线宽
 	COLORREF m_color;         //画线颜色
-	CArray<Graph*> m_graphs;  //自定义重绘
 	Graph* m_tempGraph;       //用来临时保存画笔画的线的所有坐标
 public:
+	//CArray<Graph*> m_graphs;  //保存绘制的图形
+	CObArray m_graphs;
+
 	afx_msg void OnLineStyle1();
 	afx_msg void OnUpdateLineStyle1(CCmdUI* pCmdUI);
 	afx_msg void OnLineStyle2();
